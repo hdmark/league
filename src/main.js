@@ -8,7 +8,7 @@ import VueApollo from 'vue-apollo';
 
 const apolloClient = new ApolloClient({
   // You should use an absolute URL here
-  uri: 'https://app1.lvmgmtllc.com/graphql',
+  uri: 'http://localhost:3001/graphql',
 });
 Vue.use(VueApollo);
 const apolloProvider = new VueApollo({
@@ -16,7 +16,6 @@ const apolloProvider = new VueApollo({
 });
 
 Vue.config.productionTip = false;
-
 
 new Vue({
   router,

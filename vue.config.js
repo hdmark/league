@@ -7,7 +7,7 @@ module.exports = {
     inline: true,
     host: '0.0.0.0',
     port: 3000,
-    public: 'lvmgmtllc.com',
+    // public: 'lvmgmtllc.com',
   },
 
   configureWebpack: {
@@ -18,17 +18,16 @@ module.exports = {
           test: /\.mjs$/,
           include: /node_modules/,
           type: 'javascript/auto',
-          loader: "babel-loader",
+          loader: 'babel-loader',
           exclude: /node_modules/,
           query: {
             babelrc: false,
-            presets: [["es2015", { modules: false }], "vue", "stage-3"],
-          }
+            presets: [['es2015', { modules: false }], 'vue', 'stage-3'],
+          },
         },
       ],
-    }
+    },
 
-    ,
     optimization: {
       minimize: false, // <---- disables uglify.
       removeAvailableModules: false,
