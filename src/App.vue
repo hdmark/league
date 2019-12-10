@@ -31,57 +31,70 @@
 
     <v-content>
       <!-- <HelloWorld /> -->
-      <v-btn @click="getSummoner()">click</v-btn>
+      <router-view></router-view>
     </v-content>
   </v-app>
 </template>
 
 <script>
 import axios from "axios";
+import { SUMMONER } from "@/graphql/queries.js";
 export default {
   name: "App",
 
   components: {},
 
   data: () => ({
-    //
+    summonerFound: 0,
+    search: ""
   }),
-  methods: {
-    getSummoner: async () => {
-      // let data = await axios.get(
-      //   "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/crotchetyoldman?api_key=RGAPI-926ce681-d37a-4df6-90bf-de1eab79efbe"
-      // );
-      //let data = await axios.get("https://google.com");
-      let data = await axios.request({
-        url: "?api_key=RGAPI-926ce681-d37a-4df6-90bf-de1eab79efbe",
-        headers: {
-          method: "GET",
-          Origin: "https://developer.riotgames.com",
-          "Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
-          //"X-Riot-Token": "RGAPI-926ce681-d37a-4df6-90bf-de1eab79efbe",
-          "Accept-Language": "en-US,en;q=0.9",
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36"
+  apollo: {
+    summoner: {
+      query: SUMMONER,
+      variables() {
+        return { name: this.querySummoner };
+      },
+      update(data) {
+        if (data == {}) {
+          return {};
         }
-        //crossdomain: true,
-        //"X-Riot-Token": "RGAPI-926ce681-d37a-4df6-90bf-de1eab79efbe"
-        // headers: {
-        //   "Access-Control-Allow-Origin": "*",
-        //   "Access-Control-Allow-Methods": "POST, GET, PUT, OPTIONS, DELETE",
-        //   "Access-Control-Allow-Headers":
-        //     "Access-Control-Allow-Methods, Access-Control-Allow-Origin, Origin, Accept, Content-Type",
-        //   "Content-Type": "application/json",
-        //   // Accept: "application/json",
-        //   // Origin: "https://developer.riotgames.com",
-        //   // "Accept-Charset":
-        //   //   "application/x-www-form-urlencoded; charset=UTF-8",
-        //   "Accept-Language": "en-US,en;q=0.9"
-        //   // "User-Agent":
-        //   // "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36"
-        // }
-      });
+        this.summonerFound = 1;
+        console.log("found");
+        return data.summoner;
+      },
+      skip() {
+        // skip runs before the query goes off
+        // reset the status to searching
+        this.summonerFound = 0;
 
-      console.log(data.data);
+        // if there is no wallet being searched (icemining.com/wallet/)
+        // skip the query
+        if (!this.querySummoner || this.querySummoner == "") {
+          console.log("skipped");
+          return true;
+        }
+        console.log("not skipped");
+        return false;
+      },
+      error(error) {
+        console.log("error:", error);
+        this.summonerFound = 0;
+        return;
+      }
+    }
+  },
+  props: ["querySummoner"],
+  methods: {
+    routeToSearch(search) {
+      this.$router
+        .push({
+          name: "home",
+          params: { querySummoner: search }
+        })
+        .catch(err => {
+          console.log(err);
+          return;
+        });
     }
   }
 };
